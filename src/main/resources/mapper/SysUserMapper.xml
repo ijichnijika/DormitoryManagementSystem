@@ -13,15 +13,17 @@
     
     <update id="updateById" parameterType="SysUser">
         UPDATE sys_user
-        SET username = #{username},
-            password = #{password},
-            real_name = #{realName},
-            phone = #{phone},
-            email = #{email},
-            role = #{role},
-            class_id = #{classId},
-            room_id = #{roomId},
-            status = #{status}
+        <set>
+            <if test="username != null">username = #{username},</if>
+            <if test="password != null">password = #{password},</if>
+            <if test="realName != null">real_name = #{realName},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="role != null">role = #{role},</if>
+            <if test="classId != null">class_id = #{classId},</if>
+            <if test="roomId != null">room_id = #{roomId},</if>
+            <if test="status != null">status = #{status}</if>
+        </set>
         WHERE id = #{id}
     </update>
     

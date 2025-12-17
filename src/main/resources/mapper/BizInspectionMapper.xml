@@ -14,7 +14,6 @@
     <update id="updateById" parameterType="BizInspection">
         UPDATE biz_inspection
         SET room_id = #{roomId},
-            inspector_id = #{inspectorId},
             modifier_id = #{modifierId},
             total_score = #{totalScore},
             remarks = #{remarks},

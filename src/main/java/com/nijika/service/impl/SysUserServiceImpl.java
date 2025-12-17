@@ -40,9 +40,15 @@ public class SysUserServiceImpl implements SysUserService {
         if (existing == null) {
             throw new IllegalArgumentException("用户不存在");
         }
-        if (!user.getPassword().equals(existing.getPassword())) {
+
+        // 如果密码为空或空字符串,则保留原密码不修改
+        if (user.getPassword() == null || user.getPassword().trim().isEmpty()) {
+            user.setPassword(existing.getPassword());
+        } else if (!user.getPassword().equals(existing.getPassword())) {
+            // 如果密码不为空且与原密码不同,则加密后更新
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
+
         userMapper.updateById(user);
     }
 

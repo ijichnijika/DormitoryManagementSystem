@@ -21,6 +21,18 @@ public class SysUserController {
     @Operation(summary = "创建用户")
     @PostMapping
     public Result<Void> createUser(@RequestBody SysUser user) {
+        if (user.getUsername() == null || user.getUsername().trim().isEmpty()) {
+            return Result.error("用户名不能为空");
+        }
+        if (user.getPassword() == null || user.getPassword().trim().isEmpty()) {
+            return Result.error("密码不能为空");
+        }
+        if (user.getRealName() == null || user.getRealName().trim().isEmpty()) {
+            return Result.error("真实姓名不能为空");
+        }
+        if (user.getRole() == null || user.getRole().trim().isEmpty()) {
+            return Result.error("角色不能为空");
+        }
         userService.createUser(user);
         return Result.success();
     }
@@ -28,6 +40,9 @@ public class SysUserController {
     @Operation(summary = "更新用户信息")
     @PutMapping
     public Result<Void> updateUser(@RequestBody SysUser user) {
+        if (user.getId() == null) {
+            return Result.error("用户ID不能为空");
+        }
         userService.updateUser(user);
         return Result.success();
     }
@@ -73,5 +88,12 @@ public class SysUserController {
     @GetMapping("/inspectors")
     public Result<List<SysUser>> getInspectors() {
         return Result.success(userService.getInspectors());
+    }
+
+    @Operation(summary = "用户登录")
+    @PostMapping("/login")
+    public Result<SysUser> login(@RequestBody SysUser loginUser) {
+        SysUser user = userService.login(loginUser.getUsername(), loginUser.getPassword());
+        return Result.success(user);
     }
 }

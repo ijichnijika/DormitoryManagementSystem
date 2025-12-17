@@ -21,4 +21,6 @@ public interface SysUserService {
     List<SysUser> getUsersByClassId(Long classId);
 
     List<SysUser> getInspectors();
+
+    SysUser login(String username, String password);
 }

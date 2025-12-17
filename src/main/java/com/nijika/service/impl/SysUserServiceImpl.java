@@ -81,4 +81,16 @@ public class SysUserServiceImpl implements SysUserService {
     public List<SysUser> getInspectors() {
         return userMapper.selectByRoleLike("INSPECTOR");
     }
+
+    @Override
+    public SysUser login(String username, String password) {
+        SysUser user = userMapper.selectByUsername(username);
+        if (user == null) {
+            throw new IllegalArgumentException("用户名不存在");
+        }
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new IllegalArgumentException("密码错误");
+        }
+        return user;
+    }
 }

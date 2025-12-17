@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nijika.mapper.SysBuildingMapper">
+    
+    <insert id="insert" parameterType="SysBuilding" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO sys_building (building_name, manager_name)
+        VALUES (#{buildingName}, #{managerName})
+    </insert>
+    
+    <delete id="deleteById">
+        UPDATE sys_building SET deleted_at = NOW() WHERE id = #{id}
+    </delete>
+    
+    <update id="updateById" parameterType="SysBuilding">
+        UPDATE sys_building
+        SET building_name = #{buildingName},
+            manager_name = #{managerName}
+        WHERE id = #{id}
+    </update>
+    
+    <select id="selectById" resultType="SysBuilding">
+        SELECT * FROM sys_building WHERE id = #{id} AND deleted_at IS NULL
+    </select>
+    
+    <select id="selectAll" resultType="SysBuilding">
+        SELECT * FROM sys_building WHERE deleted_at IS NULL ORDER BY created_at DESC
+    </select>
+    
+</mapper>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nijika.mapper.SysRoomMapper">
+    
+    <insert id="insert" parameterType="SysRoom" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO sys_room (building_id, room_number, capacity, gender)
+        VALUES (#{buildingId}, #{roomNumber}, #{capacity}, #{gender})
+    </insert>
+    
+    <delete id="deleteById">
+        DELETE FROM sys_room WHERE id = #{id}
+    </delete>
+    
+    <update id="updateById" parameterType="SysRoom">
+        UPDATE sys_room
+        SET building_id = #{buildingId},
+            room_number = #{roomNumber},
+            capacity = #{capacity},
+            gender = #{gender}
+        WHERE id = #{id}
+    </update>
+    
+    <select id="selectById" resultType="SysRoom">
+        SELECT * FROM sys_room WHERE id = #{id}
+    </select>
+    
+    <select id="selectAll" resultType="SysRoom">
+        SELECT * FROM sys_room ORDER BY building_id, room_number
+    </select>
+    
+    <select id="selectByBuildingId" resultType="SysRoom">
+        SELECT * FROM sys_room WHERE building_id = #{buildingId} ORDER BY room_number
+    </select>
+    
+    <select id="selectByBuildingAndRoom" resultType="SysRoom">
+        SELECT * FROM sys_room 
+        WHERE building_id = #{buildingId} AND room_number = #{roomNumber}
+    </select>
+    
+</mapper>

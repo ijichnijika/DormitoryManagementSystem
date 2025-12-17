@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nijika.mapper.BizApplicationMapper">
+    
+    <insert id="insert" parameterType="BizApplication" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO biz_application (applicant_id, application_reason, status)
+        VALUES (#{applicantId}, #{applicationReason}, #{status})
+    </insert>
+    
+    <delete id="deleteById">
+        DELETE FROM biz_application WHERE id = #{id}
+    </delete>
+    
+    <update id="updateById" parameterType="BizApplication">
+        UPDATE biz_application
+        SET applicant_id = #{applicantId},
+            application_reason = #{applicationReason},
+            status = #{status},
+            reviewer_id = #{reviewerId},
+            review_comment = #{reviewComment},
+            review_time = #{reviewTime}
+        WHERE id = #{id}
+    </update>
+    
+    <select id="selectById" resultType="BizApplication">
+        SELECT * FROM biz_application WHERE id = #{id}
+    </select>
+    
+    <select id="selectAll" resultType="BizApplication">
+        SELECT * FROM biz_application ORDER BY apply_time DESC
+    </select>
+    
+    <select id="selectByApplicantId" resultType="BizApplication">
+        SELECT * FROM biz_application 
+        WHERE applicant_id = #{applicantId} 
+        ORDER BY apply_time DESC
+    </select>
+    
+    <select id="selectByStatus" resultType="BizApplication">
+        SELECT * FROM biz_application 
+        WHERE status = #{status} 
+        ORDER BY apply_time ASC
+    </select>
+    
+    <select id="selectPendingByApplicantId" resultType="BizApplication">
+        SELECT * FROM biz_application 
+        WHERE applicant_id = #{applicantId} AND status = 0
+        LIMIT 1
+    </select>
+    
+</mapper>

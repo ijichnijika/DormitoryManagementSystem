@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nijika.mapper.BizInspectionMapper">
+    
+    <insert id="insert" parameterType="BizInspection" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO biz_inspection (room_id, inspector_id, modifier_id, total_score, remarks, evidence_imgs, check_date)
+        VALUES (#{roomId}, #{inspectorId}, #{modifierId}, #{totalScore}, #{remarks}, #{evidenceImgs}, #{checkDate})
+    </insert>
+    
+    <delete id="deleteById">
+        DELETE FROM biz_inspection WHERE id = #{id}
+    </delete>
+    
+    <update id="updateById" parameterType="BizInspection">
+        UPDATE biz_inspection
+        SET room_id = #{roomId},
+            inspector_id = #{inspectorId},
+            modifier_id = #{modifierId},
+            total_score = #{totalScore},
+            remarks = #{remarks},
+            evidence_imgs = #{evidenceImgs},
+            check_date = #{checkDate}
+        WHERE id = #{id}
+    </update>
+    
+    <select id="selectById" resultType="BizInspection">
+        SELECT * FROM biz_inspection WHERE id = #{id}
+    </select>
+    
+    <select id="selectAll" resultType="BizInspection">
+        SELECT * FROM biz_inspection ORDER BY check_date DESC, created_at DESC
+    </select>
+    
+    <select id="selectByRoomId" resultType="BizInspection">
+        SELECT * FROM biz_inspection 
+        WHERE room_id = #{roomId} 
+        ORDER BY check_date DESC
+    </select>
+    
+    <select id="selectByRoomIdAndDateRange" resultType="BizInspection">
+        SELECT * FROM biz_inspection 
+        WHERE room_id = #{roomId}
+        <if test="startDate != null">
+            AND check_date &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND check_date &lt;= #{endDate}
+        </if>
+        ORDER BY check_date DESC
+    </select>
+    
+    <select id="selectByInspectorId" resultType="BizInspection">
+        SELECT * FROM biz_inspection 
+        WHERE inspector_id = #{inspectorId} 
+        ORDER BY check_date DESC
+    </select>
+    
+</mapper>

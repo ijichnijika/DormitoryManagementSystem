@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nijika.mapper.SysUserMapper">
+    
+    <insert id="insert" parameterType="SysUser" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO sys_user (username, password, real_name, phone, email, role, class_id, room_id, status)
+        VALUES (#{username}, #{password}, #{realName}, #{phone}, #{email}, #{role}, #{classId}, #{roomId}, #{status})
+    </insert>
+    
+    <delete id="deleteById">
+        UPDATE sys_user SET deleted_at = NOW() WHERE id = #{id}
+    </delete>
+    
+    <update id="updateById" parameterType="SysUser">
+        UPDATE sys_user
+        SET username = #{username},
+            password = #{password},
+            real_name = #{realName},
+            phone = #{phone},
+            email = #{email},
+            role = #{role},
+            class_id = #{classId},
+            room_id = #{roomId},
+            status = #{status}
+        WHERE id = #{id}
+    </update>
+    
+    <select id="selectById" resultType="SysUser">
+        SELECT * FROM sys_user WHERE id = #{id} AND deleted_at IS NULL
+    </select>
+    
+    <select id="selectAll" resultType="SysUser">
+        SELECT * FROM sys_user WHERE deleted_at IS NULL ORDER BY created_at DESC
+    </select>
+    
+    <select id="selectByUsername" resultType="SysUser">
+        SELECT * FROM sys_user WHERE username = #{username} AND deleted_at IS NULL
+    </select>
+    
+    <select id="selectByRoomId" resultType="SysUser">
+        SELECT * FROM sys_user WHERE room_id = #{roomId} AND deleted_at IS NULL
+    </select>
+    
+    <select id="selectByClassId" resultType="SysUser">
+        SELECT * FROM sys_user WHERE class_id = #{classId} AND deleted_at IS NULL
+    </select>
+    
+    <select id="selectByRoleLike" resultType="SysUser">
+        SELECT * FROM sys_user 
+        WHERE role LIKE CONCAT('%', #{role}, '%') AND deleted_at IS NULL
+        ORDER BY created_at DESC
+    </select>
+    
+</mapper>

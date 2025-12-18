@@ -2,6 +2,18 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.nijika.mapper.SysRoomMapper">
     
+    <!-- ResultMap: 包含楼栋名 -->
+    <resultMap id="RoomDetailMap" type="SysRoom">
+        <id property="id" column="id"/>
+        <result property="buildingId" column="building_id"/>
+        <result property="roomNumber" column="room_number"/>
+        <result property="capacity" column="capacity"/>
+        <result property="gender" column="gender"/>
+        <result property="createdAt" column="created_at"/>
+        <!-- 扩展字段 -->
+        <result property="buildingName" column="building_name"/>
+    </resultMap>
+    
     <insert id="insert" parameterType="SysRoom" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO sys_room (building_id, room_number, capacity, gender)
         VALUES (#{buildingId}, #{roomNumber}, #{capacity}, #{gender})
@@ -20,21 +32,41 @@
         WHERE id = #{id}
     </update>
     
-    <select id="selectById" resultType="SysRoom">
-        SELECT * FROM sys_room WHERE id = #{id}
+    <select id="selectById" resultMap="RoomDetailMap">
+        SELECT 
+            r.*,
+            b.building_name
+        FROM sys_room r
+        LEFT JOIN sys_building b ON r.building_id = b.id
+        WHERE r.id = #{id}
     </select>
     
-    <select id="selectAll" resultType="SysRoom">
-        SELECT * FROM sys_room ORDER BY building_id, room_number
+    <select id="selectAll" resultMap="RoomDetailMap">
+        SELECT 
+            r.*,
+            b.building_name
+        FROM sys_room r
+        LEFT JOIN sys_building b ON r.building_id = b.id
+        ORDER BY r.building_id, r.room_number
     </select>
     
-    <select id="selectByBuildingId" resultType="SysRoom">
-        SELECT * FROM sys_room WHERE building_id = #{buildingId} ORDER BY room_number
+    <select id="selectByBuildingId" resultMap="RoomDetailMap">
+        SELECT 
+            r.*,
+            b.building_name
+        FROM sys_room r
+        LEFT JOIN sys_building b ON r.building_id = b.id
+        WHERE r.building_id = #{buildingId} 
+        ORDER BY r.room_number
     </select>
     
-    <select id="selectByBuildingAndRoom" resultType="SysRoom">
-        SELECT * FROM sys_room 
-        WHERE building_id = #{buildingId} AND room_number = #{roomNumber}
+    <select id="selectByBuildingAndRoom" resultMap="RoomDetailMap">
+        SELECT 
+            r.*,
+            b.building_name
+        FROM sys_room r
+        LEFT JOIN sys_building b ON r.building_id = b.id
+        WHERE r.building_id = #{buildingId} AND r.room_number = #{roomNumber}
     </select>
     
 </mapper>

@@ -2,6 +2,23 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.nijika.mapper.BizInspectionMapper">
     
+    <!-- ResultMap: 包含房间号和楼栋名 -->
+    <resultMap id="InspectionDetailMap" type="BizInspection">
+        <id property="id" column="id"/>
+        <result property="roomId" column="room_id"/>
+        <result property="inspectorId" column="inspector_id"/>
+        <result property="modifierId" column="modifier_id"/>
+        <result property="totalScore" column="total_score"/>
+        <result property="remarks" column="remarks"/>
+        <result property="evidenceImgs" column="evidence_imgs"/>
+        <result property="checkDate" column="check_date"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <!-- 扩展字段 -->
+        <result property="roomNumber" column="room_number"/>
+        <result property="buildingName" column="building_name"/>
+    </resultMap>
+    
     <insert id="insert" parameterType="BizInspection" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO biz_inspection (room_id, inspector_id, modifier_id, total_score, remarks, evidence_imgs, check_date)
         VALUES (#{roomId}, #{inspectorId}, #{modifierId}, #{totalScore}, #{remarks}, #{evidenceImgs}, #{checkDate})
@@ -22,36 +39,103 @@
         WHERE id = #{id}
     </update>
     
-    <select id="selectById" resultType="BizInspection">
-        SELECT * FROM biz_inspection WHERE id = #{id}
+    <select id="selectById" resultMap="InspectionDetailMap">
+        SELECT 
+            i.*,
+            r.room_number,
+            b.building_name
+        FROM biz_inspection i
+        LEFT JOIN sys_room r ON i.room_id = r.id
+        LEFT JOIN sys_building b ON r.building_id = b.id
+        WHERE i.id = #{id}
     </select>
     
-    <select id="selectAll" resultType="BizInspection">
-        SELECT * FROM biz_inspection ORDER BY check_date DESC, created_at DESC
+    <select id="selectAll" resultMap="InspectionDetailMap">
+        SELECT 
+            i.*,
+            r.room_number,
+            b.building_name
+        FROM biz_inspection i
+        LEFT JOIN sys_room r ON i.room_id = r.id
+        LEFT JOIN sys_building b ON r.building_id = b.id
+        ORDER BY i.check_date DESC, i.created_at DESC
     </select>
     
-    <select id="selectByRoomId" resultType="BizInspection">
-        SELECT * FROM biz_inspection 
-        WHERE room_id = #{roomId} 
-        ORDER BY check_date DESC
+    <select id="selectByRoomId" resultMap="InspectionDetailMap">
+        SELECT 
+            i.*,
+            r.room_number,
+            b.building_name
+        FROM biz_inspection i
+        LEFT JOIN sys_room r ON i.room_id = r.id
+        LEFT JOIN sys_building b ON r.building_id = b.id
+        WHERE i.room_id = #{roomId} 
+        ORDER BY i.check_date DESC
     </select>
     
-    <select id="selectByRoomIdAndDateRange" resultType="BizInspection">
-        SELECT * FROM biz_inspection 
-        WHERE room_id = #{roomId}
+    <select id="selectByRoomIdAndDateRange" resultMap="InspectionDetailMap">
+        SELECT 
+            i.*,
+            r.room_number,
+            b.building_name
+        FROM biz_inspection i
+        LEFT JOIN sys_room r ON i.room_id = r.id
+        LEFT JOIN sys_building b ON r.building_id = b.id
+        WHERE i.room_id = #{roomId}
         <if test="startDate != null">
-            AND check_date &gt;= #{startDate}
+            AND i.check_date &gt;= #{startDate}
         </if>
         <if test="endDate != null">
-            AND check_date &lt;= #{endDate}
+            AND i.check_date &lt;= #{endDate}
         </if>
-        ORDER BY check_date DESC
+        ORDER BY i.check_date DESC
     </select>
     
-    <select id="selectByInspectorId" resultType="BizInspection">
-        SELECT * FROM biz_inspection 
-        WHERE inspector_id = #{inspectorId} 
-        ORDER BY check_date DESC
+    <select id="selectByInspectorId" resultMap="InspectionDetailMap">
+        SELECT 
+            i.*,
+            r.room_number,
+            b.building_name
+        FROM biz_inspection i
+        LEFT JOIN sys_room r ON i.room_id = r.id
+        LEFT JOIN sys_building b ON r.building_id = b.id
+        WHERE i.inspector_id = #{inspectorId} 
+        ORDER BY i.check_date DESC
     </select>
     
+    <!-- 多条件分页查询 -->
+    <select id="selectByCondition" resultMap="InspectionDetailMap">
+        SELECT 
+            i.*,
+            r.room_number,
+            b.building_name
+        FROM biz_inspection i
+        LEFT JOIN sys_room r ON i.room_id = r.id
+        LEFT JOIN sys_building b ON r.building_id = b.id
+        <where>
+            <if test="query.roomId != null">
+                AND i.room_id = #{query.roomId}
+            </if>
+            <if test="query.buildingId != null">
+                AND r.building_id = #{query.buildingId}
+            </if>
+            <if test="query.inspectorId != null">
+                AND i.inspector_id = #{query.inspectorId}
+            </if>
+            <if test="query.minScore != null">
+                AND i.total_score &gt;= #{query.minScore}
+            </if>
+            <if test="query.maxScore != null">
+                AND i.total_score &lt;= #{query.maxScore}
+            </if>
+            <if test="query.startDate != null">
+                AND i.check_date &gt;= #{query.startDate}
+            </if>
+            <if test="query.endDate != null">
+                AND i.check_date &lt;= #{query.endDate}
+            </if>
+        </where>
+        ORDER BY i.check_date DESC, i.created_at DESC
+    </select>
+
 </mapper>

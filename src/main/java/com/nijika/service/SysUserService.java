@@ -1,5 +1,6 @@
 package com.nijika.service;
 
+import com.nijika.common.PageResult;
 import com.nijika.entity.SysUser;
 import java.util.List;
 
@@ -23,4 +24,6 @@ public interface SysUserService {
     List<SysUser> getInspectors();
 
     SysUser login(String username, String password);
+
+    PageResult<SysUser> getUsersWithPage(Integer pageNum, Integer pageSize, String keyword);
 }

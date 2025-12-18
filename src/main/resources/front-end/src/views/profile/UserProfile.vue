@@ -21,7 +21,8 @@ const userInfo = reactive({
   classId: null,
   roomId: null,
   className: '',
-  roomNumber: ''
+  roomNumber: '',
+  buildingName: '' // 新增楼栋名称
 })
 
 // 修改密码表单
@@ -63,7 +64,7 @@ const fetchUserInfo = async () => {
       
       // 加载宿舍信息
       if (res.data.roomId) {
-        fetchRoomNumber(res.data.roomId)
+        fetchRoomInfo(res.data.roomId)
       }
     }
   } catch (e) {
@@ -85,12 +86,13 @@ const fetchClassName = async (classId) => {
   }
 }
 
-// 获取宿舍房间号
-const fetchRoomNumber = async (roomId) => {
+// 获取宿舍房间信息（包含楼栋名）
+const fetchRoomInfo = async (roomId) => {
   try {
     const res = await http.get(`/room/${roomId}`)
     if (res.code === 200 && res.data) {
       userInfo.roomNumber = res.data.roomNumber
+      userInfo.buildingName = res.data.buildingName || ''
     }
   } catch (e) {
     console.error(e)
@@ -199,7 +201,16 @@ onMounted(() => {
             
             <div class="info-item">
               <span class="label">宿舍房间</span>
-              <span class="value">{{ userInfo.roomNumber || '未分配' }}</span>
+              <span class="value">
+                <template v-if="userInfo.buildingName && userInfo.roomNumber">
+                  <span class="building-tag">{{ userInfo.buildingName }}</span>
+                  <span class="room-sep"> - </span>
+                  {{ userInfo.roomNumber }}
+                </template>
+                <template v-else>
+                  {{ userInfo.roomNumber || '未分配' }}
+                </template>
+              </span>
               <el-tag size="small" type="info">只读</el-tag>
             </div>
           </div>

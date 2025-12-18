@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, Plus, Edit, Delete } from '@element-plus/icons-vue'
 import http from '@/api/http'
@@ -13,6 +13,14 @@ const dialogVisible = ref(false)
 const dialogTitle = ref('新建用户')
 const classes = ref([])
 const rooms = ref([])
+const buildings = ref([])
+const searchKeyword = ref('')
+
+const pagination = ref({
+  pageNum: 1,
+  pageSize: 10,
+  total: 0
+})
 
 const userForm = ref({
   id: null,
@@ -27,6 +35,9 @@ const userForm = ref({
   status: 1
 })
 
+const selectedRoles = ref([])
+const selectedBuildingId = ref(null)
+
 const roleOptions = [
   { label: '学生', value: ROLES.STUDENT },
   { label: '检查员', value: ROLES.INSPECTOR },
@@ -34,12 +45,24 @@ const roleOptions = [
   { label: '管理员', value: ROLES.ADMIN }
 ]
 
+const filteredRooms = computed(() => {
+  if (!selectedBuildingId.value) return []
+  return rooms.value.filter(r => r.buildingId === selectedBuildingId.value)
+})
+
 const fetchData = async () => {
   loading.value = true
   try {
-    const res = await http.get('/user/all')
+    const res = await http.get('/user/page', {
+      params: {
+        pageNum: pagination.value.pageNum,
+        pageSize: pagination.value.pageSize,
+        keyword: searchKeyword.value || undefined
+      }
+    })
     if (res.code === 200) {
-      tableData.value = res.data || []
+      tableData.value = res.data?.records || []
+      pagination.value.total = res.data?.total || 0
     }
   } catch (e) {
     console.error(e)
@@ -70,6 +93,22 @@ const fetchRooms = async () => {
   }
 }
 
+const fetchBuildings = async () => {
+  try {
+    const res = await http.get('/building/all')
+    if (res.code === 200) {
+      buildings.value = res.data || []
+    }
+  } catch (e) {
+    console.error(e)
+  }
+}
+
+const handleSearch = () => {
+  pagination.value.pageNum = 1
+  fetchData()
+}
+
 const handleAdd = () => {
   dialogTitle.value = '新建用户'
   resetForm()
@@ -79,6 +118,13 @@ const handleAdd = () => {
 const handleEdit = (row) => {
   dialogTitle.value = '编辑用户'
   userForm.value = { ...row }
+  selectedRoles.value = row.role ? row.role.split(',') : []
+  if (row.roomId) {
+    const room = rooms.value.find(r => r.id === row.roomId)
+    selectedBuildingId.value = room ? room.buildingId : null
+  } else {
+    selectedBuildingId.value = null
+  }
   dialogVisible.value = true
 }
 
@@ -98,6 +144,14 @@ const handleDelete = (row) => {
       console.error(e)
     }
   })
+}
+
+const updateRoleString = () => {
+  userForm.value.role = selectedRoles.value.join(',')
+}
+
+const onBuildingChange = () => {
+  userForm.value.roomId = null
 }
 
 const saveUser = async () => {
@@ -130,6 +184,32 @@ const resetForm = () => {
     roomId: null,
     status: 1
   }
+  selectedRoles.value = [ROLES.STUDENT]
+  selectedBuildingId.value = null
+}
+
+const handleSizeChange = (val) => {
+  pagination.value.pageSize = val
+  pagination.value.pageNum = 1
+  fetchData()
+}
+
+const handleCurrentChange = (val) => {
+  pagination.value.pageNum = val
+  fetchData()
+}
+
+const getRoleTagType = (role) => {
+  if (!role) return ''
+  if (role.includes('ADMIN')) return 'danger'
+  if (role.includes('TEACHER')) return 'warning'
+  if (role.includes('INSPECTOR')) return 'success'
+  return ''
+}
+
+const formatRoles = (role) => {
+  if (!role) return '-'
+  return role.split(',').map(r => getRoleDisplayName(r)).join('、')
 }
 
 onMounted(() => {
@@ -140,7 +220,10 @@ onMounted(() => {
   fetchData()
   fetchClasses()
   fetchRooms()
+  fetchBuildings()
 })
+
+watch(selectedRoles, updateRoleString)
 </script>
 
 <template>
@@ -152,25 +235,47 @@ onMounted(() => {
             <h3>用户管理</h3>
             <p>管理系统所有用户信息</p>
           </div>
-          <el-button type="primary" :icon="Plus" @click="handleAdd">新建用户</el-button>
+          <div class="header-actions">
+            <el-input
+              v-model="searchKeyword"
+              placeholder="搜索姓名或用户名"
+              :prefix-icon="Search"
+              clearable
+              class="search-input"
+              @keyup.enter="handleSearch"
+              @clear="handleSearch"
+            />
+            <el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
+            <el-button type="primary" :icon="Plus" @click="handleAdd">新建用户</el-button>
+          </div>
         </div>
       </template>
 
       <el-table :data="tableData" v-loading="loading" class="custom-table">
-        <el-table-column prop="id" label="ID" width="80" />
         <el-table-column prop="username" label="用户名" width="120" />
-        <el-table-column prop="realName" label="姓名" width="120" />
-        <el-table-column prop="role" label="角色" width="100">
+        <el-table-column prop="realName" label="姓名" width="100" />
+        <el-table-column prop="role" label="角色" width="150">
           <template #default="scope">
-            <el-tag :type="scope.row.role === 'ADMIN' ? 'danger' : scope.row.role === 'TEACHER' ? 'warning' : ''">
-              {{ getRoleDisplayName(scope.row.role) }}
+            <el-tag :type="getRoleTagType(scope.row.role)">
+              {{ formatRoles(scope.row.role) }}
             </el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="phone" label="电话" width="130" />
         <el-table-column prop="email" label="邮箱" show-overflow-tooltip />
-        <el-table-column prop="classId" label="班级ID" width="80" />
-        <el-table-column prop="roomId" label="房间ID" width="80" />
+        <el-table-column prop="className" label="班级" width="120">
+          <template #default="scope">
+            {{ scope.row.className || '-' }}
+          </template>
+        </el-table-column>
+        <el-table-column label="宿舍" width="160">
+          <template #default="scope">
+            <span v-if="scope.row.buildingName && scope.row.roomNumber">
+              {{ scope.row.buildingName }} - {{ scope.row.roomNumber }}
+            </span>
+            <span v-else>-</span>
+          </template>
+        </el-table-column>
         <el-table-column label="操作" width="150" align="center" fixed="right">
           <template #default="scope">
             <el-button size="small" type="primary" :icon="Edit" circle @click="handleEdit(scope.row)" />
@@ -178,9 +283,20 @@ onMounted(() => {
           </template>
         </el-table-column>
       </el-table>
+
+      <div class="pagination-container">
+        <el-pagination
+          v-model:current-page="pagination.pageNum"
+          v-model:page-size="pagination.pageSize"
+          :total="pagination.total"
+          :page-sizes="[10, 20, 50]"
+          layout="total, sizes, prev, pager, next, jumper"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
+      </div>
     </el-card>
 
-    <!-- 用户编辑对话框 -->
     <el-dialog v-model="dialogVisible" :title="dialogTitle" width="600px">
       <el-form :model="userForm" label-width="100px">
         <el-row :gutter="20">
@@ -204,9 +320,11 @@ onMounted(() => {
           <el-col :span="12">
             <el-form-item label="角色">
               <el-select 
-                v-model="userForm.role" 
+                v-model="selectedRoles"
+                multiple
                 class="w-100"
                 :disabled="!isAdmin()"
+                placeholder="请选择角色"
               >
                 <el-option v-for="opt in roleOptions" :key="opt.value" :label="opt.label" :value="opt.value" />
               </el-select>
@@ -229,15 +347,24 @@ onMounted(() => {
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="班级">
-              <el-select v-model="userForm.classId" class="w-100" clearable>
+              <el-select v-model="userForm.classId" class="w-100" clearable placeholder="请选择班级">
                 <el-option v-for="c in classes" :key="c.id" :label="c.className" :value="c.id" />
               </el-select>
             </el-form-item>
           </el-col>
+        </el-row>
+        <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="宿舍房间">
-              <el-select v-model="userForm.roomId" class="w-100" clearable>
-                <el-option v-for="r in rooms" :key="r.id" :label="r.roomNumber" :value="r.id" />
+            <el-form-item label="宿舍楼">
+              <el-select v-model="selectedBuildingId" class="w-100" clearable placeholder="请选择楼栋" @change="onBuildingChange">
+                <el-option v-for="b in buildings" :key="b.id" :label="b.buildingName" :value="b.id" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="房间号">
+              <el-select v-model="userForm.roomId" class="w-100" clearable :disabled="!selectedBuildingId" placeholder="请先选择楼栋">
+                <el-option v-for="r in filteredRooms" :key="r.id" :label="r.roomNumber" :value="r.id" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -279,6 +406,16 @@ onMounted(() => {
   color: #64748b;
 }
 
+.header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.search-input {
+  width: 200px;
+}
+
 .custom-table {
   border-radius: 12px;
 }
@@ -287,6 +424,12 @@ onMounted(() => {
   background: #f8fafc;
   color: var(--color-text-secondary);
   font-weight: 600;
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
 }
 
 .role-hint {

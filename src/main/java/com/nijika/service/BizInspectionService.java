@@ -1,7 +1,9 @@
 package com.nijika.service;
 
+import com.nijika.common.PageResult;
+import com.nijika.dto.InspectionQuery;
 import com.nijika.entity.BizInspection;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface BizInspectionService {
@@ -17,7 +19,10 @@ public interface BizInspectionService {
 
     List<BizInspection> getInspectionsByRoomId(Long roomId);
 
-    List<BizInspection> getInspectionsByRoomIdAndDateRange(Long roomId, LocalDate startDate, LocalDate endDate);
+    List<BizInspection> getInspectionsByRoomIdAndDateRange(Long roomId, LocalDateTime startDate, LocalDateTime endDate);
 
     List<BizInspection> getInspectionsByInspectorId(Long inspectorId);
+
+    // 多条件分页查询
+    PageResult<BizInspection> pageInspections(InspectionQuery query);
 }

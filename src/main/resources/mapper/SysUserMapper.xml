@@ -52,5 +52,46 @@
         WHERE role LIKE CONCAT('%', #{role}, '%') AND deleted_at IS NULL
         ORDER BY created_at DESC
     </select>
-    
+
+    <resultMap id="sysUserWithDetails" type="SysUser">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="realName" column="real_name"/>
+        <result property="phone" column="phone"/>
+        <result property="email" column="email"/>
+        <result property="role" column="role"/>
+        <result property="classId" column="class_id"/>
+        <result property="roomId" column="room_id"/>
+        <result property="status" column="status"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="deletedAt" column="deleted_at"/>
+        <result property="className" column="class_name"/>
+        <result property="roomNumber" column="room_number"/>
+        <result property="buildingName" column="building_name"/>
+    </resultMap>
+
+    <select id="selectWithSearch" resultMap="sysUserWithDetails">
+        SELECT u.*, c.class_name, r.room_number, b.building_name
+        FROM sys_user u
+        LEFT JOIN sys_class c ON u.class_id = c.id
+        LEFT JOIN sys_room r ON u.room_id = r.id
+        LEFT JOIN sys_building b ON r.building_id = b.id
+        WHERE u.deleted_at IS NULL
+        <if test="keyword != null and keyword != ''">
+            AND (u.real_name LIKE CONCAT('%', #{keyword}, '%')
+                 OR u.username LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+        ORDER BY 
+            CASE 
+                WHEN u.role LIKE '%ADMIN%' THEN 1
+                WHEN u.role LIKE '%TEACHER%' THEN 2
+                WHEN u.role LIKE '%INSPECTOR%' THEN 3
+                ELSE 4
+            END,
+            u.id ASC
+    </select>
+
 </mapper>
+

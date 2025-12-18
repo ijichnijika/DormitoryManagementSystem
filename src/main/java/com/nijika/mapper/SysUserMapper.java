@@ -22,4 +22,6 @@ public interface SysUserMapper {
     List<SysUser> selectByClassId(@Param("classId") Long classId);
 
     List<SysUser> selectByRoleLike(@Param("role") String role);
+
+    List<SysUser> selectWithSearch(@Param("keyword") String keyword);
 }

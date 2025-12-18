@@ -1,5 +1,6 @@
 package com.nijika.controller;
 
+import com.nijika.common.PageResult;
 import com.nijika.common.Result;
 import com.nijika.util.JwtUtil;
 import com.nijika.entity.SysUser;
@@ -105,5 +106,14 @@ public class SysUserController {
         data.put("token", token);
 
         return Result.success(data);
+    }
+
+    @Operation(summary = "分页查询用户列表")
+    @GetMapping("/page")
+    public Result<PageResult<SysUser>> getUsersWithPage(
+            @RequestParam(defaultValue = "1") Integer pageNum,
+            @RequestParam(defaultValue = "10") Integer pageSize,
+            @RequestParam(required = false) String keyword) {
+        return Result.success(userService.getUsersWithPage(pageNum, pageSize, keyword));
     }
 }

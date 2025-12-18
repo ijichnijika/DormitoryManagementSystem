@@ -1,6 +1,8 @@
 package com.nijika.controller;
 
+import com.nijika.common.PageResult;
 import com.nijika.common.Result;
+import com.nijika.dto.InspectionQuery;
 import com.nijika.entity.BizInspection;
 import com.nijika.service.BizInspectionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,8 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Tag(name = "卫生检查管理", description = "卫生检查记录的增删改查接口")
@@ -64,8 +65,8 @@ public class BizInspectionController {
     @GetMapping("/room/{roomId}/date-range")
     public Result<List<BizInspection>> getInspectionsByDateRange(
             @PathVariable Long roomId,
-            @Parameter(description = "开始日期") @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @Parameter(description = "结束日期") @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+            @Parameter(description = "开始日期") @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @Parameter(description = "结束日期") @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
         return Result.success(inspectionService.getInspectionsByRoomIdAndDateRange(roomId, startDate, endDate));
     }
 
@@ -73,5 +74,11 @@ public class BizInspectionController {
     @GetMapping("/inspector/{inspectorId}")
     public Result<List<BizInspection>> getInspectionsByInspectorId(@PathVariable Long inspectorId) {
         return Result.success(inspectionService.getInspectionsByInspectorId(inspectorId));
+    }
+
+    @Operation(summary = "分页查询检查记录", description = "支持楼栋/宿舍/检查员/分数/日期范围多条件组合搜索")
+    @PostMapping("/page")
+    public Result<PageResult<BizInspection>> pageInspections(@RequestBody InspectionQuery query) {
+        return Result.success(inspectionService.pageInspections(query));
     }
 }

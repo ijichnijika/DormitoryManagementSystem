@@ -8,6 +8,20 @@ spring:
     username: root
     password: waxyf2022
   
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password:
+      database: 0
+      timeout: 3000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-wait: -1ms
+          max-idle: 8
+          min-idle: 0
+  
   servlet:
     multipart:
       max-file-size: 10MB
@@ -17,6 +31,7 @@ spring:
     user:
       name: admin
       password: admin
+
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml

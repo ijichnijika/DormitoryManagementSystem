@@ -1,6 +1,7 @@
 package com.nijika.controller;
 
 import com.nijika.common.Result;
+import com.nijika.util.JwtUtil;
 import com.nijika.entity.SysUser;
 import com.nijika.service.SysUserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -8,7 +9,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Tag(name = "用户管理", description = "用户信息的增删改查接口")
 @RestController
@@ -17,6 +20,7 @@ import java.util.List;
 public class SysUserController {
 
     private final SysUserService userService;
+    private final JwtUtil jwtUtil;
 
     @Operation(summary = "创建用户")
     @PostMapping
@@ -92,8 +96,14 @@ public class SysUserController {
 
     @Operation(summary = "用户登录")
     @PostMapping("/login")
-    public Result<SysUser> login(@RequestBody SysUser loginUser) {
+    public Result<Map<String, Object>> login(@RequestBody SysUser loginUser) {
         SysUser user = userService.login(loginUser.getUsername(), loginUser.getPassword());
-        return Result.success(user);
+        String token = jwtUtil.generateToken(user.getUsername(), user.getId(), user.getRole());
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("user", user);
+        data.put("token", token);
+
+        return Result.success(data);
     }
 }

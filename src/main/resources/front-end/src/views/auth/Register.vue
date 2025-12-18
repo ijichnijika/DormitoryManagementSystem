@@ -12,13 +12,14 @@ const form = reactive({
   username: '',
   password: '',
   confirmPassword: '',
+  realName: '',
   phone: '',
   email: ''
 })
 
 const handleRegister = async () => {
-  if (!form.username || !form.password) {
-      ElMessage.warning('请填写必填项')
+  if (!form.username || !form.password || !form.realName) {
+      ElMessage.warning('请填写所有必填项')
       return
   }
   if (form.password !== form.confirmPassword) {
@@ -28,13 +29,13 @@ const handleRegister = async () => {
 
   loading.value = true
   try {
-      // payload matches SysUser entity
       const payload = {
           username: form.username,
           password: form.password,
+          realName: form.realName,
           phone: form.phone,
           email: form.email,
-          role: 'STUDENT', // Default role
+          role: 'STUDENT',
           status: 1
       }
       
@@ -45,7 +46,7 @@ const handleRegister = async () => {
       } else {
           ElMessage.error(res.message || '注册失败')
       }
-  } catch(e) { /* handled by http interceptor */ } 
+  } catch(e) { } 
   finally {
       loading.value = false
   }
@@ -57,12 +58,16 @@ const handleRegister = async () => {
     <div class="auth-card">
       <div class="header">
         <h2>注册账号</h2>
-        <p>Join the Dormitory System</p>
+        <p>加入学生宿舍卫生管理系统</p>
       </div>
 
       <el-form label-position="top" size="large">
         <el-form-item label="用户名 *">
-          <el-input v-model="form.username" :prefix-icon="User" placeholder="设置学号或用户名" />
+          <el-input v-model="form.username" :prefix-icon="User" placeholder="学号或用户名" />
+        </el-form-item>
+        
+        <el-form-item label="真实姓名 *">
+          <el-input v-model="form.realName" :prefix-icon="User" placeholder="请输入真实姓名" />
         </el-form-item>
         
         <el-form-item label="密码 *">
@@ -71,7 +76,7 @@ const handleRegister = async () => {
             type="password" 
             :prefix-icon="Lock" 
             show-password 
-            placeholder="设置密码" 
+            placeholder="设置密码（至少6位）" 
           />
         </el-form-item>
         
@@ -80,7 +85,7 @@ const handleRegister = async () => {
             v-model="form.confirmPassword" 
             type="password" 
             :prefix-icon="Lock" 
-            placeholder="确认密码" 
+            placeholder="再次输入密码" 
           />
         </el-form-item>
 

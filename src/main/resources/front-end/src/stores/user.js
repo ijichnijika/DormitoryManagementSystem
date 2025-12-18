@@ -12,11 +12,11 @@ export const useUserStore = defineStore('user', () => {
             const res = await http.post('/user/login', { username, password })
 
             if (res.code === 200 && res.data) {
-                const user = res.data
-                token.value = 'token-' + user.id
+                const { user, token: jwtToken } = res.data
+                token.value = jwtToken
                 userInfo.value = user
 
-                localStorage.setItem('token', token.value)
+                localStorage.setItem('token', jwtToken)
                 localStorage.setItem('userInfo', JSON.stringify(user))
                 ElMessage.success('登录成功')
                 return true
@@ -25,7 +25,6 @@ export const useUserStore = defineStore('user', () => {
                 return false
             }
         } catch (error) {
-            // 错误已在拦截器中显示
             console.error('登录错误:', error)
             return false
         }

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { User, Lock } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
@@ -13,6 +13,19 @@ const loginForm = reactive({
   password: ''
 })
 const loading = ref(false)
+const rememberMe = ref(false)
+
+onMounted(() => {
+  const savedUsername = localStorage.getItem('rememberedUsername')
+  const savedPassword = localStorage.getItem('rememberedPassword')
+  if (savedUsername) {
+    loginForm.username = savedUsername
+    if (savedPassword) {
+      loginForm.password = atob(savedPassword)
+    }
+    rememberMe.value = true
+  }
+})
 
 const handleLogin = async () => {
   if (!loginForm.username || !loginForm.password) {
@@ -25,6 +38,13 @@ const handleLogin = async () => {
   loading.value = false
 
   if (success) {
+    if (rememberMe.value) {
+      localStorage.setItem('rememberedUsername', loginForm.username)
+      localStorage.setItem('rememberedPassword', btoa(loginForm.password))
+    } else {
+      localStorage.removeItem('rememberedUsername')
+      localStorage.removeItem('rememberedPassword')
+    }
     router.push('/dashboard')
   }
 }
@@ -55,6 +75,10 @@ const handleLogin = async () => {
             placeholder="密码"
             @keyup.enter="handleLogin" 
           />
+        </el-form-item>
+        
+        <el-form-item>
+          <el-checkbox v-model="rememberMe">记住我</el-checkbox>
         </el-form-item>
         
         <el-button type="primary" class="w-100 action-btn" :loading="loading" @click="handleLogin">

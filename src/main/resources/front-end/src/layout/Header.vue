@@ -99,6 +99,4 @@ const handleLogout = () => {
   font-weight: 500;
   font-size: 14px;
 }
-
-/* Dropdown override if possible, though Element Plus uses global portal */
 </style>

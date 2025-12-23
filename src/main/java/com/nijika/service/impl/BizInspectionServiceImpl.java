@@ -10,8 +10,6 @@ import com.nijika.service.BizInspectionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -30,7 +28,7 @@ public class BizInspectionServiceImpl implements BizInspectionService {
             throw new IllegalArgumentException("分数必须在0-100之间");
         }
         if (inspection.getCheckDate() == null) { // 默认当天检查
-            inspection.setCheckDate(LocalDateTime.now());
+            inspection.setCheckDate(java.time.LocalDate.now());
         }
         inspectionMapper.insert(inspection);
     }

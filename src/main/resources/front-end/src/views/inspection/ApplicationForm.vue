@@ -19,10 +19,8 @@ const rules = {
   ]
 }
 
-// 检查是否已经是检查员
 const alreadyInspector = computed(() => isInspector())
 
-// 检查是否有待审核的申请
 const checkPendingApplication = async () => {
   try {
     const userId = userStore.userInfo?.id
@@ -30,7 +28,6 @@ const checkPendingApplication = async () => {
     
     const res = await http.get(`/application/applicant/${userId}`)
     if (res.code === 200 && res.data) {
-      // 检查是否有status为0(待审核)的申请
       hasPendingApplication.value = res.data.some(app => app.status === 0)
     }
   } catch (e) {
@@ -41,13 +38,11 @@ const checkPendingApplication = async () => {
 const submitForm = (formEl) => {
   if (!formEl) return
   
-  // 检查是否已经是检查员
   if (alreadyInspector.value) {
     ElMessage.warning('您已经是检查员,无需再次申请')
     return
   }
   
-  // 检查是否有待审核申请
   if (hasPendingApplication.value) {
     ElMessage.warning('您已有待审核的申请,请耐心等待')
     return
@@ -59,7 +54,7 @@ const submitForm = (formEl) => {
             const payload = {
                 applicantId: userStore.userInfo?.id || 0,
                 applicationReason: form.applicationReason,
-                status: 0, // Pending
+                status: 0,
                 applyTime: new Date().toISOString()
             }
             
@@ -70,7 +65,6 @@ const submitForm = (formEl) => {
                 hasPendingApplication.value = true
             }
         } catch (e) {
-            // handled
         }
     }
   })
@@ -87,7 +81,6 @@ onMounted(() => {
       <h3>申请检查员权限</h3>
     </template>
     
-    <!-- 已是检查员提示 -->
     <el-alert 
       v-if="alreadyInspector"
       title="您已经是检查员"
@@ -98,7 +91,6 @@ onMounted(() => {
       class="alert-margin"
     />
     
-    <!-- 有待审核申请提示 -->
     <el-alert 
       v-else-if="hasPendingApplication"
       title="申请审核中"
@@ -109,7 +101,6 @@ onMounted(() => {
       class="alert-margin"
     />
     
-    <!-- 申请表单 -->
     <template v-else>
       <div class="info-alert">
           <p>💡 说明: 审批通过后，您将获得宿舍卫生检查与录入的权限。</p>

@@ -27,12 +27,10 @@ const rules = {
   ]
 }
 
-// 监听分数变化,低于60分时提示填写备注
 watch(() => form.totalScore, (newScore) => {
   showRemarksHint.value = newScore < 60
 })
 
-// 获取宿舍楼列表
 const fetchBuildings = async () => {
   try {
     const res = await http.get('/building/all')
@@ -44,7 +42,6 @@ const fetchBuildings = async () => {
   }
 }
 
-// 宿舍楼变化时获取房间列表
 const handleBuildingChange = async (val) => {
   form.roomId = ''
   rooms.value = []
@@ -65,7 +62,6 @@ const submitForm = (formEl) => {
   if (!formEl) return
   formEl.validate(async (valid) => {
     if (valid) {
-      // 低分未填写备注提示
       if (form.totalScore < 60 && !form.remarks.trim()) {
         ElMessage.warning('分数低于60分,建议填写扣分原因')
         return
@@ -87,7 +83,6 @@ const submitForm = (formEl) => {
           resetForm(formEl)
         }
       } catch (e) {
-        // handled by interceptor
       }
     }
   })
@@ -143,7 +138,6 @@ onMounted(() => {
           </div>
         </el-form-item>
         
-        <!-- 低分提示 -->
         <el-alert
           v-if="showRemarksHint"
           title="分数低于60分"

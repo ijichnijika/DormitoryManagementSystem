@@ -11,14 +11,13 @@ import '@/styles/index.css'
 
 const app = createApp(App)
 
-// Register Icons
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component)
 }
 
 app.use(createPinia())
 app.use(router)
-app.use(ElementPlus, { locale: zhCn }) // 使用中文
+app.use(ElementPlus, { locale: zhCn })
 
 app.mount('#app')
 

@@ -3,10 +3,10 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, Plus, Edit, Delete } from '@element-plus/icons-vue'
 import http from '@/api/http'
-import { useUserStore } from '@/stores/user'
+
 import { isManager, isAdmin, ROLES, getRoleDisplayName } from '@/utils/auth'
 
-const userStore = useUserStore()
+
 const tableData = ref([])
 const loading = ref(false)
 const dialogVisible = ref(false)

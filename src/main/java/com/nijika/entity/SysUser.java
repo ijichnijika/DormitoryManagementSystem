@@ -26,7 +26,6 @@ public class SysUser implements Serializable {
     private LocalDateTime updatedAt;
     // 软删除标记，保留历史数据关联，所有查询需加 deleted_at IS NULL
     private LocalDateTime deletedAt;
-
     private transient String className;
     private transient String roomNumber;
     private transient String buildingName;

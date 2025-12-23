@@ -2,6 +2,7 @@ package com.nijika.entity;
 
 import lombok.Data;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -17,7 +18,7 @@ public class BizInspection implements Serializable {
     private Integer totalScore;
     private String remarks;
     private String evidenceImgs;
-    private LocalDateTime checkDate;
+    private LocalDate checkDate;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     // 扩展字段：用于前端显示，不持久化到数据库

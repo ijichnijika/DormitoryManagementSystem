@@ -6,12 +6,10 @@ import Header from './Header.vue'
 
 <template>
   <div class="app-wrapper">
-    <!-- Sidebar -->
     <aside class="app-sidebar glass-dark">
       <Sidebar />
     </aside>
 
-    <!-- Main Content -->
     <div class="app-main-content">
       <header class="app-header glass">
         <Header />
@@ -53,7 +51,7 @@ import Header from './Header.vue'
 
 .app-main-content {
   flex: 1;
-  margin-left: 284px; /* 260px width + 12px left + 12px gap */
+  margin-left: 284px;
   margin-right: 12px;
   padding-top: 2vh;
   display: flex;

@@ -10,8 +10,7 @@ const tableData = ref([])
 const loading = ref(false)
 const queryDate = ref('')
 
-// Assuming user has a roomId, in a real app this comes from user info
-// For demo, we might mock it if missing, or use userStore.userInfo.roomId
+
 const roomId = userStore.userInfo?.roomId || 0
 
 const fetchData = async () => {
@@ -22,12 +21,28 @@ const fetchData = async () => {
 
   loading.value = true
   try {
-    const res = await http.get(`/inspection/room/${roomId}`)
+    let res
+    if (queryDate.value) {
+      // 按月份查询:将月份转换为日期范围
+      const date = new Date(queryDate.value)
+      const year = date.getFullYear()
+      const month = date.getMonth() + 1
+      const startDate = `${year}-${String(month).padStart(2, '0')}-01`
+      const lastDay = new Date(year, month, 0).getDate()
+      const endDate = `${year}-${String(month).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`
+      
+      res = await http.get(`/inspection/room/${roomId}/date-range`, {
+        params: { startDate, endDate }
+      })
+    } else {
+      // 查询所有记录
+      res = await http.get(`/inspection/room/${roomId}`)
+    }
+    
     if (res.code === 200) {
         tableData.value = res.data
     }
   } catch (e) {
-      // Quiet fail or show error
   } finally {
       loading.value = false
   }
@@ -131,7 +146,7 @@ onMounted(() => {
     background: #fef2f2;
 }
 
-/* Table Override */
+
 :deep(.el-table) {
     --el-table-border-color: transparent;
     --el-table-header-bg-color: #f8fafc;

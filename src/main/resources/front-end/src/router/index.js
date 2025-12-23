@@ -35,7 +35,7 @@ const routes = [
                 meta: {
                     title: '我的卫生记录',
                     requiresAuth: true,
-                    roles: ['STUDENT', 'INSPECTOR'] // 仅学生和检查员
+                    roles: ['STUDENT', 'INSPECTOR']
                 }
             },
             {
@@ -45,7 +45,7 @@ const routes = [
                 meta: {
                     title: '录入检查',
                     requiresAuth: true,
-                    roles: ['INSPECTOR', 'TEACHER', 'ADMIN'] // 仅检查员和管理人员
+                    roles: ['INSPECTOR', 'TEACHER', 'ADMIN']
                 }
             },
             {
@@ -55,7 +55,7 @@ const routes = [
                 meta: {
                     title: '申请检查员',
                     requiresAuth: true,
-                    roles: ['STUDENT', 'INSPECTOR'] // 学生和检查员可申请
+                    roles: ['STUDENT', 'INSPECTOR']
                 }
             },
             {
@@ -75,7 +75,7 @@ const routes = [
                 meta: {
                     title: '审批管理',
                     requiresAuth: true,
-                    roles: ['TEACHER'] // 仅教师
+                    roles: ['TEACHER']
                 }
             },
             {
@@ -85,7 +85,7 @@ const routes = [
                 meta: {
                     title: '检查记录管理',
                     requiresAuth: true,
-                    roles: ['TEACHER'] // 仅教师
+                    roles: ['TEACHER']
                 }
             },
             {
@@ -134,42 +134,34 @@ const router = createRouter({
     routes
 })
 
-// 增强的导航守卫 - 支持基于角色的权限控制
 router.beforeEach((to, from, next) => {
     const token = localStorage.getItem('token')
-
-    // 公开页面白名单
     const publicPages = ['/login', '/register']
     const isPublicPage = publicPages.includes(to.path)
 
-    // 1. 未登录用户访问受保护页面 -> 跳转到登录页
     if (to.meta.requiresAuth && !token) {
         ElMessage.warning('请先登录')
         return next({
             path: '/login',
-            query: { redirect: to.fullPath } // 保存目标路径,登录后跳转
+            query: { redirect: to.fullPath }
         })
     }
 
-    // 2. 已登录用户访问登录/注册页 -> 跳转到仪表盘
     if (isPublicPage && token) {
         return next('/dashboard')
     }
 
-    // 3. 检查角色权限
     if (to.meta.requiresAuth && token) {
         if (!canAccessRoute(to)) {
             ElMessage.error('您没有权限访问该页面')
-            // 如果是从其他页面跳转来的,返回上一页;否则跳转到仪表盘
             if (from.path && from.path !== '/') {
-                return next(false) // 取消导航
+                return next(false)
             } else {
                 return next('/dashboard')
             }
         }
     }
 
-    // 4. 设置页面标题
     document.title = (to.meta.title ? `${to.meta.title} - ` : '') + '宿舍卫生管理系统'
 
     next()

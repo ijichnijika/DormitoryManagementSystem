@@ -39,7 +39,6 @@ const roleTagType = computed(() => {
       background-color="transparent"
       router
     >
-      <!-- 所有用户都可见的菜单 -->
       <div class="menu-label">常规</div>
       <el-menu-item index="/dashboard">
         <el-icon><HomeFilled /></el-icon>
@@ -51,7 +50,6 @@ const roleTagType = computed(() => {
         <span>个人信息</span>
       </el-menu-item>
       
-      <!-- 学生和检查员菜单 -->
       <template v-if="isStudent()">
         <div class="menu-label">卫生管理</div>
         <el-sub-menu index="inspection">
@@ -63,12 +61,10 @@ const roleTagType = computed(() => {
           <el-menu-item index="/inspection/my-applications">我的申请</el-menu-item>
           <el-menu-item index="/inspection/apply">申请检查员</el-menu-item>
           
-          <!-- 仅检查员可见 -->
           <el-menu-item v-if="isInspector()" index="/inspection/entry">录入检查</el-menu-item>
         </el-sub-menu>
       </template>
 
-      <!-- 教师菜单 -->
       <template v-if="isTeacher()">
         <div class="menu-label">教师管理</div>
         <el-sub-menu index="teacher">
@@ -83,7 +79,6 @@ const roleTagType = computed(() => {
         </el-sub-menu>
       </template>
 
-      <!-- 管理员菜单 -->
       <template v-if="isAdmin()">
         <div class="menu-label">系统管理</div>
         <el-sub-menu index="admin">
@@ -97,7 +92,6 @@ const roleTagType = computed(() => {
       </template>
     </el-menu>
 
-    <!-- 用户信息底部 -->
     <div class="sidebar-footer">
       <el-tag :type="roleTagType" effect="plain" class="role-tag">
         {{ roleDisplayName }}

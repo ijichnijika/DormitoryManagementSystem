@@ -4,9 +4,11 @@ import { ElMessage } from 'element-plus'
 import { User, Lock, Phone, Message } from '@element-plus/icons-vue'
 import http from '@/api/http'
 import { useUserStore } from '@/stores/user'
+import { useRouter } from 'vue-router'
 import { getRoleDisplayName } from '@/utils/auth'
 
 const userStore = useUserStore()
+const router = useRouter()
 const loading = ref(false)
 const passwordDialogVisible = ref(false)
 
@@ -22,7 +24,7 @@ const userInfo = reactive({
   roomId: null,
   className: '',
   roomNumber: '',
-  buildingName: '' // 新增楼栋名称
+  buildingName: '' 
 })
 
 // 修改密码表单
@@ -143,10 +145,19 @@ const changePassword = async () => {
     if (res.code === 200) {
       ElMessage.success('密码修改成功,请重新登录')
       passwordDialogVisible.value = false
+      
       // 清空表单
       passwordForm.oldPassword = ''
       passwordForm.newPassword = ''
       passwordForm.confirmPassword = ''
+      
+      // 清除用户登录状态
+      userStore.logout()
+      
+      // 延迟跳转,让用户看到成功消息
+      setTimeout(() => {
+        router.push('/login')
+      }, 1500)
     }
   } catch (e) {
     console.error(e)

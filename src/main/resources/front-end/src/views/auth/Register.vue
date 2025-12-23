@@ -46,122 +46,340 @@ const handleRegister = async () => {
       } else {
           ElMessage.error(res.message || '注册失败')
       }
-  } catch(e) { } 
-  finally {
+  } catch(e) { 
+    console.error(e)
+  } finally {
       loading.value = false
   }
 }
 </script>
 
 <template>
-  <div class="auth-container">
-    <div class="auth-card">
-      <div class="header">
-        <h2>注册账号</h2>
-        <p>加入学生宿舍卫生管理系统</p>
+  <div class="register-wrapper">
+    <div class="split-layout">
+      <!-- Left Side: Visual -->
+      <div class="visual-side">
+        <div class="visual-content">
+          <div class="logo-area">
+            <h1>DMS</h1>
+            <span>智慧宿管</span>
+          </div>
+          <div class="visual-text">
+            <h2>加入我们</h2>
+            <p>创建一个账户，开始体验更智能的宿舍生活。便捷的报修、透明的卫生成绩，一切尽在掌握。</p>
+          </div>
+        </div>
+        <div class="overlay"></div>
+        <img src="https://picsum.photos/seed/dorm_register/1200/1600" alt="Dorm Life" class="bg-image" />
       </div>
 
-      <el-form label-position="top" size="large">
-        <el-form-item label="用户名 *">
-          <el-input v-model="form.username" :prefix-icon="User" placeholder="学号或用户名" />
-        </el-form-item>
-        
-        <el-form-item label="真实姓名 *">
-          <el-input v-model="form.realName" :prefix-icon="User" placeholder="请输入真实姓名" />
-        </el-form-item>
-        
-        <el-form-item label="密码 *">
-          <el-input 
-            v-model="form.password" 
-            type="password" 
-            :prefix-icon="Lock" 
-            show-password 
-            placeholder="设置密码（至少6位）" 
-          />
-        </el-form-item>
-        
-         <el-form-item label="确认密码 *">
-          <el-input 
-            v-model="form.confirmPassword" 
-            type="password" 
-            :prefix-icon="Lock" 
-            placeholder="再次输入密码" 
-          />
-        </el-form-item>
+      <!-- Right Side: Interaction -->
+      <div class="form-side">
+        <div class="form-scroll-container">
+          <div class="form-container">
+            <div class="form-header">
+              <h2>创建新账号</h2>
+              <p class="subtitle">请填写以下信息完成注册</p>
+            </div>
 
-        <el-form-item label="手机号">
-          <el-input v-model="form.phone" :prefix-icon="Iphone" placeholder="选填" />
-        </el-form-item>
-        
-        <el-form-item label="邮箱">
-          <el-input v-model="form.email" :prefix-icon="Message" placeholder="选填" />
-        </el-form-item>
+            <el-form 
+              label-position="top" 
+              size="large" 
+              class="custom-form"
+              hide-required-asterisk
+            >
+              <div class="form-grid">
+                <el-form-item label="用户名">
+                  <el-input 
+                    v-model="form.username" 
+                    :prefix-icon="User" 
+                    placeholder="请输入学号/工号" 
+                    class="custom-input"
+                  />
+                </el-form-item>
+                
+                <el-form-item label="真实姓名">
+                  <el-input 
+                    v-model="form.realName" 
+                    :prefix-icon="User" 
+                    placeholder="请输入您的姓名" 
+                    class="custom-input"
+                  />
+                </el-form-item>
+              </div>
 
-        <el-button type="primary" class="w-100 action-btn" :loading="loading" @click="handleRegister">
-          立即注册
-        </el-button>
-        
-        <div class="footer">
-            <span class="text-gray">已有账号? </span>
-            <el-link type="primary" @click="$router.push('/login')">去登录</el-link>
+              <div class="form-grid">
+                <el-form-item label="设置密码">
+                  <el-input 
+                    v-model="form.password" 
+                    type="password" 
+                    :prefix-icon="Lock" 
+                    show-password 
+                    placeholder="6位以上字符" 
+                    class="custom-input"
+                  />
+                </el-form-item>
+                
+                <el-form-item label="确认密码">
+                  <el-input 
+                    v-model="form.confirmPassword" 
+                    type="password" 
+                    :prefix-icon="Lock" 
+                    placeholder="再次输入密码" 
+                    class="custom-input"
+                  />
+                </el-form-item>
+              </div>
+
+              <el-form-item label="手机号码 (选填)">
+                <el-input 
+                  v-model="form.phone" 
+                  :prefix-icon="Iphone" 
+                  placeholder="用于接收通知" 
+                  class="custom-input"
+                />
+              </el-form-item>
+              
+              <el-form-item label="电子邮箱 (选填)">
+                <el-input 
+                  v-model="form.email" 
+                  :prefix-icon="Message" 
+                  placeholder="example@school.edu.cn" 
+                  class="custom-input"
+                />
+              </el-form-item>
+
+              <el-button 
+                type="primary" 
+                class="submit-btn" 
+                :loading="loading" 
+                @click="handleRegister"
+                auto-insert-space
+              >
+                立即注册
+              </el-button>
+              
+              <div class="form-footer">
+                  <span class="text-gray">已有账号? </span>
+                  <el-link type="primary" :underline="false" @click="$router.push('/login')">直接登录</el-link>
+              </div>
+            </el-form>
+          </div>
         </div>
-      </el-form>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.auth-container {
-  min-height: 100vh;
+.register-wrapper {
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background: #fff;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.split-layout {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #f8fafc;
+  height: 100%;
 }
 
-.auth-card {
-  width: 400px;
-  padding: 40px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+/* Left Visual Side (Same as Login) */
+.visual-side {
+  flex: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 60px;
+  color: white;
+  background-color: #0f172a;
+  overflow: hidden;
 }
 
-.header {
-  text-align: center;
-  margin-bottom: 30px;
-}
-
-.header h2 {
-  margin: 0 0 8px;
-  font-size: 24px;
-  color: #1e293b;
-}
-
-.header p {
-  margin: 0;
-  color: #64748b;
-  font-size: 14px;
-}
-
-.w-100 {
+.bg-image {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  opacity: 0.6;
+  filter: grayscale(20%) contrast(110%);
 }
 
-.action-btn {
-  margin-top: 10px;
-  height: 44px;
-  font-size: 16px;
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(15, 23, 42, 0.4) 100%);
+  z-index: 1;
+}
+
+.visual-content {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.logo-area h1 {
+  font-size: 32px;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: -1px;
+}
+
+.logo-area span {
+  font-size: 14px;
+  opacity: 0.8;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.visual-text h2 {
+  font-size: 48px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  line-height: 1.1;
+}
+
+.visual-text p {
+  font-size: 18px;
+  line-height: 1.6;
+  opacity: 0.9;
+  max-width: 480px;
+}
+
+/* Right Form Side */
+.form-side {
+  width: 600px; /* Slightly wider for register form */
+  flex-shrink: 0;
+  background: white;
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-scroll-container {
+  flex: 1;
+  overflow-y: auto; /* Allow scrolling if height is small */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+.form-container {
+  width: 100%;
+  max-width: 460px;
+  padding: 0 40px;
+}
+
+.form-header {
+  margin-bottom: 30px;
+  text-align: left;
+}
+
+.form-header h2 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 8px;
+}
+
+.subtitle {
+  color: #64748b;
+  font-size: 15px;
+  margin: 0;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* Custom Element Plus Overrides */
+:deep(.el-input__wrapper) {
+  box-shadow: 0 0 0 1px #e2e8f0 inset;
+  padding: 8px 15px;
   border-radius: 8px;
+  transition: all 0.3s ease;
 }
 
-.footer {
-    margin-top: 20px;
-    text-align: center;
-    font-size: 14px;
+:deep(.el-input__wrapper:hover) {
+  box-shadow: 0 0 0 1px #cbd5e1 inset;
 }
 
-.text-gray {
-    color: #64748b;
+:deep(.el-input__wrapper.is-focus) {
+  box-shadow: 0 0 0 2px #3b82f6 inset !important;
+}
+
+:deep(.el-form-item__label) {
+  font-weight: 500;
+  color: #334155;
+  margin-bottom: 6px;
+  line-height: 1.5;
+}
+
+.submit-btn {
+  width: 100%;
+  height: 48px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  background: #3b82f6;
+  border-color: #3b82f6;
+  transition: all 0.2s ease;
+  margin-top: 10px;
+}
+
+.submit-btn:hover {
+  background: #2563eb;
+  border-color: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+}
+
+.submit-btn:active {
+  transform: translateY(0);
+}
+
+.form-footer {
+  margin-top: 24px;
+  text-align: center;
+  font-size: 14px;
+  color: #64748b;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .visual-side {
+    display: none;
+  }
+  
+  .form-side {
+    width: 100%;
+  }
+
+  .form-container {
+    max-width: 100%;
+    padding: 0 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
 }
 </style>

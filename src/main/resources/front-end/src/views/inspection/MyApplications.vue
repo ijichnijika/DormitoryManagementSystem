@@ -92,7 +92,6 @@ onMounted(() => {
         </el-table-column>
       </el-table>
 
-      <!-- 提示信息 -->
       <el-alert 
         v-if="list.some(item => item.status === 0)"
         title="您有待审核的申请,请耐心等待教师审批"

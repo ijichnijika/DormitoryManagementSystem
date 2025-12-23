@@ -65,9 +65,11 @@ public class BizInspectionController {
     @GetMapping("/room/{roomId}/date-range")
     public Result<List<BizInspection>> getInspectionsByDateRange(
             @PathVariable Long roomId,
-            @Parameter(description = "开始日期") @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-            @Parameter(description = "结束日期") @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
-        return Result.success(inspectionService.getInspectionsByRoomIdAndDateRange(roomId, startDate, endDate));
+            @Parameter(description = "开始日期") @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) java.time.LocalDate startDate,
+            @Parameter(description = "结束日期") @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) java.time.LocalDate endDate) {
+        LocalDateTime startDateTime = startDate != null ? startDate.atStartOfDay() : null;
+        LocalDateTime endDateTime = endDate != null ? endDate.atTime(23, 59, 59) : null;
+        return Result.success(inspectionService.getInspectionsByRoomIdAndDateRange(roomId, startDateTime, endDateTime));
     }
 
     @Operation(summary = "查询某检查员的工作记录")

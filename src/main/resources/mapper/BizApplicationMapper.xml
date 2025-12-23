@@ -8,7 +8,7 @@
     </insert>
     
     <delete id="deleteById">
-        DELETE FROM biz_application WHERE id = #{id}
+        UPDATE biz_application SET deleted_at = NOW() WHERE id = #{id}
     </delete>
     
     <update id="updateById" parameterType="BizApplication">
@@ -23,28 +23,28 @@
     </update>
     
     <select id="selectById" resultType="BizApplication">
-        SELECT * FROM biz_application WHERE id = #{id}
+        SELECT * FROM biz_application WHERE id = #{id} AND deleted_at IS NULL
     </select>
     
     <select id="selectAll" resultType="BizApplication">
-        SELECT * FROM biz_application ORDER BY apply_time DESC
+        SELECT * FROM biz_application WHERE deleted_at IS NULL ORDER BY apply_time DESC
     </select>
     
     <select id="selectByApplicantId" resultType="BizApplication">
         SELECT * FROM biz_application 
-        WHERE applicant_id = #{applicantId} 
+        WHERE applicant_id = #{applicantId} AND deleted_at IS NULL
         ORDER BY apply_time DESC
     </select>
     
     <select id="selectByStatus" resultType="BizApplication">
         SELECT * FROM biz_application 
-        WHERE status = #{status} 
+        WHERE status = #{status} AND deleted_at IS NULL
         ORDER BY apply_time ASC
     </select>
     
     <select id="selectPendingByApplicantId" resultType="BizApplication">
         SELECT * FROM biz_application 
-        WHERE applicant_id = #{applicantId} AND status = 0
+        WHERE applicant_id = #{applicantId} AND status = 0 AND deleted_at IS NULL
         LIMIT 1
     </select>
     

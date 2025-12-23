@@ -20,7 +20,7 @@
     </insert>
     
     <delete id="deleteById">
-        DELETE FROM sys_room WHERE id = #{id}
+        UPDATE sys_room SET deleted_at = NOW() WHERE id = #{id}
     </delete>
     
     <update id="updateById" parameterType="SysRoom">
@@ -38,7 +38,7 @@
             b.building_name
         FROM sys_room r
         LEFT JOIN sys_building b ON r.building_id = b.id
-        WHERE r.id = #{id}
+        WHERE r.id = #{id} AND r.deleted_at IS NULL
     </select>
     
     <select id="selectAll" resultMap="RoomDetailMap">
@@ -47,6 +47,7 @@
             b.building_name
         FROM sys_room r
         LEFT JOIN sys_building b ON r.building_id = b.id
+        WHERE r.deleted_at IS NULL
         ORDER BY r.building_id, r.room_number
     </select>
     
@@ -56,7 +57,7 @@
             b.building_name
         FROM sys_room r
         LEFT JOIN sys_building b ON r.building_id = b.id
-        WHERE r.building_id = #{buildingId} 
+        WHERE r.building_id = #{buildingId} AND r.deleted_at IS NULL
         ORDER BY r.room_number
     </select>
     
@@ -66,7 +67,7 @@
             b.building_name
         FROM sys_room r
         LEFT JOIN sys_building b ON r.building_id = b.id
-        WHERE r.building_id = #{buildingId} AND r.room_number = #{roomNumber}
+        WHERE r.building_id = #{buildingId} AND r.room_number = #{roomNumber} AND r.deleted_at IS NULL
     </select>
     
 </mapper>

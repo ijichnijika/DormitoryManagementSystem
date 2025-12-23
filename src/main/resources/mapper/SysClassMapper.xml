@@ -8,7 +8,7 @@
     </insert>
     
     <delete id="deleteById">
-        DELETE FROM sys_class WHERE id = #{id}
+        UPDATE sys_class SET deleted_at = NOW() WHERE id = #{id}
     </delete>
     
     <update id="updateById" parameterType="SysClass">
@@ -19,15 +19,15 @@
     </update>
     
     <select id="selectById" resultType="SysClass">
-        SELECT * FROM sys_class WHERE id = #{id}
+        SELECT * FROM sys_class WHERE id = #{id} AND deleted_at IS NULL
     </select>
     
     <select id="selectAll" resultType="SysClass">
-        SELECT * FROM sys_class ORDER BY created_at DESC
+        SELECT * FROM sys_class WHERE deleted_at IS NULL ORDER BY created_at DESC
     </select>
     
     <select id="selectByClassName" resultType="SysClass">
-        SELECT * FROM sys_class WHERE class_name = #{className}
+        SELECT * FROM sys_class WHERE class_name = #{className} AND deleted_at IS NULL
     </select>
     
 </mapper>

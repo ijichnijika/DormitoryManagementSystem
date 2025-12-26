@@ -31,7 +31,94 @@
 - **路由**：Vue Router
 - **状态管理**：Pinia
 
-## 📦 项目结构
+## �️ 数据库设计
+
+### 数据库名称
+`dormitory_db` (字符集：utf8mb4)
+
+### 系统域 - 基础配置表
+
+#### 1. sys_class - 班级信息表
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| id | BIGINT | 主键ID |
+| class_name | VARCHAR(64) | 班级名称（唯一） |
+| counselor_name | VARCHAR(32) | 辅导员姓名 |
+| created_at | DATETIME | 创建时间 |
+
+#### 2. sys_building - 宿舍楼信息表
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| id | BIGINT | 主键ID |
+| building_name | VARCHAR(32) | 楼宇名称 |
+| manager_name | VARCHAR(32) | 宿管姓名 |
+| created_at | DATETIME | 创建时间 |
+| deleted_at | DATETIME | 删除时间（软删除） |
+
+#### 3. sys_room - 宿舍房间表
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| id | BIGINT | 主键ID |
+| building_id | BIGINT | 所属楼宇ID |
+| room_number | VARCHAR(16) | 房间号 |
+| capacity | INT | 床位容量（默认4） |
+| gender | TINYINT | 性别限制：1-男寝，2-女寝 |
+| created_at | DATETIME | 创建时间 |
+
+**索引**：building_id + room_number 唯一索引
+
+#### 4. sys_user - 系统用户表
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| id | BIGINT | 主键ID |
+| username | VARCHAR(32) | 账号（学号/工号，唯一） |
+| password | VARCHAR(128) | 加密密码 |
+| real_name | VARCHAR(32) | 真实姓名 |
+| phone | VARCHAR(11) | 手机号 |
+| email | VARCHAR(64) | 邮箱 |
+| role | VARCHAR(128) | 角色（多角色逗号分隔） |
+| class_id | BIGINT | 所属班级ID |
+| room_id | BIGINT | 所属宿舍ID |
+| status | TINYINT | 状态：1-正常，0-禁用 |
+| created_at | DATETIME | 创建时间 |
+| updated_at | DATETIME | 更新时间 |
+| deleted_at | DATETIME | 删除时间（软删除） |
+
+### 业务域 - 核心业务表
+
+#### 5. biz_inspection - 卫生检查记录表
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| id | BIGINT | 主键ID |
+| room_id | BIGINT | 被检查宿舍ID |
+| inspector_id | BIGINT | 检查员ID |
+| modifier_id | BIGINT | 最后修改人ID |
+| total_score | INT | 总分（0-100） |
+| remarks | TEXT | 备注说明 |
+| evidence_imgs | TEXT | 图片路径（逗号分隔） |
+| check_date | DATE | 检查日期 |
+| created_at | DATETIME | 录入时间 |
+| updated_at | DATETIME | 最后修改时间 |
+
+**约束**：total_score 取值范围 0-100
+
+#### 6. biz_application - 检查员权限申请表
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| id | BIGINT | 主键ID |
+| applicant_id | BIGINT | 申请人ID |
+| application_reason | VARCHAR(500) | 申请理由 |
+| status | TINYINT | 状态：0-待审核，1-已通过，2-已驳回 |
+| reviewer_id | BIGINT | 审核人ID |
+| review_comment | TEXT | 审核意见 |
+| review_time | DATETIME | 审核时间 |
+| apply_time | DATETIME | 申请提交时间 |
+| updated_at | DATETIME | 最后更新时间 |
+
+### 数据库脚本位置
+完整的建表脚本位于：[src/main/resources/sql/schema.sql](src/main/resources/sql/schema.sql)
+
+## �📦 项目结构
 
 ```
 DormitoryManagementSystem/
@@ -76,9 +163,12 @@ cd DormitoryManagementSystem
 ```
 
 2. **配置数据库**
-- 创建数据库：`CREATE DATABASE dormitory_management;`
-- 导入数据库脚本（如果有）
-- 修改 `application.yml` 中的数据库配置
+- 创建数据库：
+  ```sql
+  CREATE DATABASE dormitory_db DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+  ```
+- 导入数据库脚本：`mysql -u root -p dormitory_db < src/main/resources/sql/schema.sql`
+- 修改 `src/main/resources/application.yml` 中的数据库配置
 
 3. **配置 Redis**
 - 确保 Redis 服务运行
@@ -163,7 +253,7 @@ npm run build
 ```yaml
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/dormitory_management
+    url: jdbc:mysql://localhost:3306/dormitory_db?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
     username: root
     password: your_password
   

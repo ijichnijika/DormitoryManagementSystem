@@ -56,7 +56,7 @@ public class JwtUtil {
         return claims.get("userId", Long.class);
     }
 
-    public String getRoleFromToken(String token) { // 从Token提取角色字符串（前端路由守卫需要）
+    public String getRoleFromToken(String token) { // 从Token提取角色字符串
         Claims claims = getClaimsFromToken(token);
         return claims.get("role", String.class);
     }

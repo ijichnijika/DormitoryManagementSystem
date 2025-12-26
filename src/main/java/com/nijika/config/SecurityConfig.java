@@ -38,8 +38,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/user/login").permitAll() // 登录接口公开
                         .requestMatchers("/api/user", "/api/user/").permitAll() // 注册接口公开(支持带或不带斜杠)
                         .requestMatchers("/doc.html", "/webjars/**", "/v3/api-docs/**", "/swagger-ui/**",
-                                "/swagger-resources/**")
-                        .permitAll() // Knife4j文档公开
+                                "/swagger-resources/**").permitAll() // Knife4j文档公开
                         .anyRequest().authenticated()) // 其他接口需认证
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // JWT过滤器优先执行
         return http.build();

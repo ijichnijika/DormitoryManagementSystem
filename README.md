@@ -288,7 +288,7 @@ jwt:
 ## 📧 联系方式
 
 - 项目地址：https://github.com/ijichnijika/DormitoryManagementSystem
-- 作者：ijichnijika
+- 作者：ijichnijika（xyf）
 
 ## 🙏 致谢
 

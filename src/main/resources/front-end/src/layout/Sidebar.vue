@@ -72,7 +72,7 @@ const roleTagType = computed(() => {
             <el-icon><Document /></el-icon>
             <span>管理中心</span>
           </template>
-          <el-menu-item index="/admin/applications">申请审批</el-menu-item>
+          <el-menu-item index="/admin/applications">审核申请</el-menu-item>
           <el-menu-item index="/management/inspections">检查记录</el-menu-item>
           <el-menu-item index="/management/users">用户管理</el-menu-item>
           <el-menu-item index="/management/basic-data">基础数据</el-menu-item>

@@ -6,6 +6,10 @@ import com.nijika.entity.BizInspection;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * 卫生检查服务接口
+ * 功能：检查记录的增删改查、多条件查询、分页查询
+ */
 public interface BizInspectionService {
     void createInspection(BizInspection inspection);
 

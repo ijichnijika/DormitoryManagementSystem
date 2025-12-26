@@ -148,12 +148,6 @@ const routes = [
         meta: { title: '用户登录' }
         // 注意:没有 requiresAuth,所以无需登录即可访问
     },
-    {
-        path: '/register',
-        name: 'Register',
-        component: () => import('@/views/auth/Register.vue'),
-        meta: { title: '用户注册' }
-    },
 
     // ==================== 404 路由 ====================
     {

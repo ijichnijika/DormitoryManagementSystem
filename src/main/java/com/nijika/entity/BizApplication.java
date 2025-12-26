@@ -21,5 +21,5 @@ public class BizApplication implements Serializable {
     private LocalDateTime reviewTime;
     private LocalDateTime applyTime;
     private LocalDateTime updatedAt;
-    private LocalDateTime deletedAt; // 软删除时间戳
+    private LocalDateTime deletedAt;
 }

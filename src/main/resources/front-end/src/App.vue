@@ -1,12 +1,13 @@
+<!--
+  根组件
+  功能：作为Vue应用的根容器，渲染路由视图
+-->
 <script setup>
 </script>
 
 <template>
-  <el-config-provider namespace="el">
-    <router-view />
-  </el-config-provider>
+  <router-view />
 </template>
 
 <style>
-/* Global styles are imported in main.js */
 </style>

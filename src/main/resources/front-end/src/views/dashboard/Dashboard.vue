@@ -6,7 +6,6 @@ import { useUserStore } from '@/stores/user'
 const userStore = useUserStore()
 const role = computed(() => userStore.userInfo?.role || 'STUDENT')
 
-// Mock stats for demo
 const studentStats = [
     { title: '我的评分', value: '98', icon: Rank, color: '#3b82f6' },
     { title: '本周排名', value: 'Top 10', icon: Monitor, color: '#10b981' }
@@ -26,7 +25,6 @@ const stats = computed(() => role.value === 'ADMIN' || role.value === 'TEACHER' 
     <h2>仪表盘</h2>
     <p class="subtitle">欢迎回来, {{ userStore.userInfo?.realName || userStore.userInfo?.username }}</p>
 
-    <!-- Stats Grid -->
     <div class="stats-grid">
       <div v-for="stat in stats" :key="stat.title" class="stat-card">
         <div class="stat-icon" :style="{ background: stat.color + '20', color: stat.color }">
@@ -38,8 +36,6 @@ const stats = computed(() => role.value === 'ADMIN' || role.value === 'TEACHER' 
         </div>
       </div>
     </div>
-    
-    <!-- Empty State / Placeholder -->
     <div class="content-placeholder">
         <el-empty description="暂无更多动态" />
     </div>

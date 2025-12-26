@@ -2,11 +2,15 @@ package com.nijika.common;
 
 import lombok.Data;
 
+/**
+ * 统一响应结果封装
+ * 前端统一处理：{ code: 200, message: "操作成功", data: {...} }
+ */
 @Data
 public class Result<T> {
-    private Integer code;
-    private String message;
-    private T data;
+    private Integer code; // 状态码：200成功，400客户端错误，500服务器错误
+    private String message; // 提示信息
+    private T data; // 响应数据（泛型）
 
     public static <T> Result<T> success() {
         Result<T> result = new Result<>();

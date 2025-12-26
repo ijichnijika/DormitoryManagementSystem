@@ -9,6 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * 班级业务实现
+ * 核心逻辑：班级名称唯一性校验
+ */
 @Service
 @RequiredArgsConstructor
 public class SysClassServiceImpl implements SysClassService {
@@ -18,7 +22,7 @@ public class SysClassServiceImpl implements SysClassService {
     @Override
     @Transactional
     public void createClass(SysClass sysClass) {
-        if (classMapper.selectByClassName(sysClass.getClassName()) != null) {
+        if (classMapper.selectByClassName(sysClass.getClassName()) != null) { // 校验班级名称唯一性
             throw new IllegalArgumentException("班级名称已存在");
         }
         classMapper.insert(sysClass);
@@ -32,7 +36,7 @@ public class SysClassServiceImpl implements SysClassService {
 
     @Override
     @Transactional
-    public void deleteClass(Long id) {
+    public void deleteClass(Long id) { // 软删除：设置deleted_at
         classMapper.deleteById(id);
     }
 

@@ -25,7 +25,7 @@
     </insert>
     
     <delete id="deleteById">
-        DELETE FROM biz_inspection WHERE id = #{id}
+        UPDATE biz_inspection SET deleted_at = NOW() WHERE id = #{id}
     </delete>
     
     <update id="updateById" parameterType="BizInspection">

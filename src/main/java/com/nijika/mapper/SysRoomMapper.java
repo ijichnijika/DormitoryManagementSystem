@@ -4,6 +4,10 @@ import com.nijika.entity.SysRoom;
 import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
+/**
+ * 宿舍房间数据访问层
+ * SQL映射文件：resources/mapper/SysRoomMapper.xml
+ */
 public interface SysRoomMapper {
     int insert(SysRoom sysRoom);
 

@@ -58,7 +58,6 @@ const handleLogin = async () => {
 <template>
   <div class="login-wrapper">
     <div class="split-layout">
-      <!-- Left Side: Visual -->
       <div class="visual-side">
         <div class="visual-content">
           <div class="logo-area">
@@ -74,7 +73,6 @@ const handleLogin = async () => {
         <img src="https://picsum.photos/seed/dorm_login_v2/1200/1600" alt="Campus Life" class="bg-image" />
       </div>
 
-      <!-- Right Side: Interaction -->
       <div class="form-side">
         <div class="form-container">
           <div class="form-header">
@@ -123,11 +121,6 @@ const handleLogin = async () => {
             >
               登录
             </el-button>
-            
-            <div class="form-footer">
-              <span class="text-gray">还没有账号? </span>
-              <el-link type="primary" :underline="false" @click="$router.push('/register')">立即注册</el-link>
-            </div>
           </el-form>
         </div>
       </div>
@@ -149,7 +142,6 @@ const handleLogin = async () => {
   height: 100%;
 }
 
-/* Left Visual Side */
 .visual-side {
   flex: 1;
   position: relative;
@@ -221,9 +213,8 @@ const handleLogin = async () => {
   max-width: 480px;
 }
 
-/* Right Form Side */
 .form-side {
-  width: 500px; /* Fixed width for better readability on large screens */
+  width: 500px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -256,7 +247,6 @@ const handleLogin = async () => {
   margin: 0;
 }
 
-/* Custom Element Plus Overrides */
 :deep(.el-input__wrapper) {
   box-shadow: 0 0 0 1px #e2e8f0 inset;
   padding: 8px 15px;
@@ -269,7 +259,7 @@ const handleLogin = async () => {
 }
 
 :deep(.el-input__wrapper.is-focus) {
-  box-shadow: 0 0 0 2px #3b82f6 inset !important; /* Primary Blue */
+  box-shadow: 0 0 0 2px #3b82f6 inset !important; 
 }
 
 :deep(.el-form-item__label) {
@@ -314,7 +304,6 @@ const handleLogin = async () => {
   color: #64748b;
 }
 
-/* Responsive */
 @media (max-width: 900px) {
   .visual-side {
     display: none;

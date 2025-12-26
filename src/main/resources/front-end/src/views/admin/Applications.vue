@@ -17,7 +17,6 @@ const fetchData = async () => {
           list.value = res.data
       }
   } catch (e) {
-      // handled
   } finally {
       loading.value = false
   }
@@ -33,9 +32,9 @@ const handleApprove = (row) => {
           const res = await http.put(`/application/${row.id}/approve?reviewerId=${userStore.userInfo?.id || 1}`)
           if (res.code === 200) {
              ElMessage.success('已审核通过')
-             fetchData() // Refresh
+             fetchData() 
           }
-      } catch(e) { /* */ }
+      } catch(e) { }
   })
 }
 
@@ -50,7 +49,7 @@ const handleReject = (row) => {
               ElMessage.info(`已驳回: ${value}`)
               fetchData()
           }
-      } catch(e) { /* */ }
+      } catch(e) { }
   })
 }
 

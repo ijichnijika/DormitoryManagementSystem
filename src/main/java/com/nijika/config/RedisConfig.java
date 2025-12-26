@@ -18,6 +18,10 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import java.time.Duration;
 
+/**
+ * Redis配置
+ * 核心功能：缓存管理 + JSON序列化
+ */
 @Configuration
 @EnableCaching
 public class RedisConfig {
@@ -49,7 +53,7 @@ public class RedisConfig {
                 return template;
         }
 
-        // 关键：配置CacheManager，使@Cacheable注解生效
+        // 配置CacheManager，使@Cacheable注解生效
         @Bean
         public CacheManager cacheManager(RedisConnectionFactory factory) {
                 // 配置序列化（和上面RedisTemplate一致）

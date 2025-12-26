@@ -17,7 +17,7 @@ import java.util.Map;
  */
 @Component
 public class JwtUtil {
-    @Value("${jwt.secret:dormitory-management-system-secret-key-2024-very-secure}") // 配置文件可覆盖
+    @Value("${jwt.secret:dormitory-management-system-secret-key-2025-very-secure}") // 配置文件可覆盖
     private String secret;
     @Value("${jwt.expiration:86400000}") // 默认24小时(毫秒)
     private Long expiration;

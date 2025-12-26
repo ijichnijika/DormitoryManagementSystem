@@ -4,6 +4,10 @@ import com.nijika.common.PageResult;
 import com.nijika.entity.SysUser;
 import java.util.List;
 
+/**
+ * 用户服务接口
+ * 功能：用户增删改查、登录认证、角色筛选、分页查询
+ */
 public interface SysUserService {
     void createUser(SysUser user);
 

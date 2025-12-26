@@ -4,6 +4,10 @@ import com.nijika.entity.SysUser;
 import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
+/**
+ * 用户数据访问层
+ * SQL映射文件：resources/mapper/SysUserMapper.xml
+ */
 public interface SysUserMapper {
     int insert(SysUser sysUser);
 

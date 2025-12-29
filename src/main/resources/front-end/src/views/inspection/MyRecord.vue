@@ -23,7 +23,7 @@ const fetchData = async () => {
   try {
     let res
     if (queryDate.value) {
-      // 按月份查询:将月份转换为日期范围
+      
       const date = new Date(queryDate.value)
       const year = date.getFullYear()
       const month = date.getMonth() + 1
@@ -35,7 +35,6 @@ const fetchData = async () => {
         params: { startDate, endDate }
       })
     } else {
-      // 查询所有记录
       res = await http.get(`/inspection/room/${roomId}`)
     }
     

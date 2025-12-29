@@ -1,0 +1,27 @@
+# 第一阶段：构建前端
+FROM node:18-alpine AS builder
+
+WORKDIR /app
+
+# 复制 package.json 并安装依赖
+COPY src/main/resources/front-end/package*.json ./
+RUN npm install --registry=https://registry.npmmirror.com
+
+# 复制前端源码并构建
+COPY src/main/resources/front-end ./
+RUN npm run build
+
+# 第二阶段：使用 Nginx 运行
+FROM nginx:alpine
+
+# 复制构建产物到 Nginx 默认目录
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# 复制自定义 Nginx 配置
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# 暴露 80 端口
+EXPOSE 80
+
+# 启动 Nginx
+CMD ["nginx", "-g", "daemon off;"]

@@ -1,5 +1,5 @@
 -- ============================================================
--- 学生宿舍卫生管理系统
+-- 学生宿舍卫生管理系统 - 完整数据库结构
 -- ============================================================
 
 DROP DATABASE IF EXISTS dormitory_db;
@@ -16,8 +16,10 @@ CREATE TABLE `sys_class` (
   `class_name` VARCHAR(64) NOT NULL COMMENT '班级名称',
   `counselor_name` VARCHAR(32) DEFAULT NULL COMMENT '辅导员姓名',
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `deleted_at` DATETIME DEFAULT NULL COMMENT '删除时间(软删除)',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_class_name` (`class_name`)
+  UNIQUE KEY `uk_class_name` (`class_name`),
+  KEY `idx_deleted_at` (`deleted_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='班级信息表';
 
 -- 宿舍楼表
@@ -39,9 +41,11 @@ CREATE TABLE `sys_room` (
   `capacity` INT NOT NULL DEFAULT 4 COMMENT '床位容量',
   `gender` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '性别限制:1-男寝,2-女寝',
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `deleted_at` DATETIME DEFAULT NULL COMMENT '删除时间(软删除)',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_building_room` (`building_id`, `room_number`),
-  KEY `idx_building_id` (`building_id`)
+  KEY `idx_building_id` (`building_id`),
+  KEY `idx_deleted_at` (`deleted_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='宿舍房间表';
 
 -- 用户表
@@ -101,8 +105,53 @@ CREATE TABLE `biz_application` (
   `review_time` DATETIME DEFAULT NULL COMMENT '审核时间',
   `apply_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '申请提交时间',
   `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后更新时间',
+  `deleted_at` DATETIME DEFAULT NULL COMMENT '删除时间(软删除)',
   PRIMARY KEY (`id`),
   KEY `idx_applicant_status` (`applicant_id`, `status`),
   KEY `idx_status` (`status`),
-  KEY `idx_apply_time` (`apply_time`)
+  KEY `idx_apply_time` (`apply_time`),
+  KEY `idx_deleted_at` (`deleted_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='检查员权限申请表';
+
+-- ============================================================
+-- 初始化数据
+-- ============================================================
+
+-- 插入测试班级
+INSERT INTO `sys_class` (`class_name`, `counselor_name`) VALUES
+('软件231', '张老师'),
+('软件232', '李老师'),
+('计算机231', '王老师');
+
+-- 插入宿舍楼
+INSERT INTO `sys_building` (`building_name`, `manager_name`) VALUES
+('A栋', '宿管阿姨1'),
+('B栋', '宿管阿姨2'),
+('C栋', '宿管阿姨3');
+
+-- 插入宿舍房间
+INSERT INTO `sys_room` (`building_id`, `room_number`, `capacity`, `gender`) VALUES
+(1, '101', 4, 1),
+(1, '102', 4, 1),
+(1, '201', 6, 1),
+(2, '301', 4, 2),
+(2, '302', 4, 2),
+(3, '401', 4, 1);
+
+-- 插入管理员账号
+-- 密码为 admin123 的 BCrypt 加密（需要根据你的实际加密方式调整）
+INSERT INTO `sys_user` (`username`, `password`, `real_name`, `phone`, `email`, `role`, `status`) VALUES
+('admin', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVKIUi', '系统管理员', '13800138000', 'admin@dorm.com', 'ADMIN,TEACHER', 1),
+('teacher01', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVKIUi', '教师01', '13800138001', 'teacher@dorm.com', 'TEACHER', 1);
+
+-- 插入学生测试账号
+INSERT INTO `sys_user` (`username`, `password`, `real_name`, `phone`, `role`, `class_id`, `room_id`, `status`) VALUES
+('2023001', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVKIUi', '张三', '13900000001', 'STUDENT', 1, 1, 1),
+('2023002', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVKIUi', '李四', '13900000002', 'STUDENT,INSPECTOR', 1, 1, 1),
+('2023003', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVKIUi', '王五', '13900000003', 'STUDENT', 2, 2, 1);
+
+-- 插入测试卫生检查记录
+INSERT INTO `biz_inspection` (`room_id`, `inspector_id`, `total_score`, `remarks`, `check_date`) VALUES
+(1, 2, 85, '宿舍整体整洁，地面干净', '2024-12-28'),
+(2, 2, 92, '卫生状况优秀', '2024-12-28'),
+(1, 2, 78, '桌面有杂物，需整理', '2024-12-29');

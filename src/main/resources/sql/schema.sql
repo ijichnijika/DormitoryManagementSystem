@@ -2,6 +2,10 @@
 -- 学生宿舍卫生管理系统 - 完整数据库结构
 -- ============================================================
 
+-- 确保使用 UTF-8 编码
+SET NAMES utf8mb4;
+SET CHARACTER SET utf8mb4;
+
 DROP DATABASE IF EXISTS dormitory_db;
 CREATE DATABASE dormitory_db DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE dormitory_db;

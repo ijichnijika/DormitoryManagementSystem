@@ -4,6 +4,10 @@
 -- docker exec -i dorm-mysql mysql -u root -p123456 dormitory_db < src/main/resources/sql/test-data.sql
 -- ============================================================
 
+-- 确保使用 UTF-8 编码
+SET NAMES utf8mb4;
+SET CHARACTER SET utf8mb4;
+
 USE dormitory_db;
 
 -- ============================================================

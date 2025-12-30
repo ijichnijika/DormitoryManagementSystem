@@ -48,6 +48,11 @@ server:
   port: 8080
   compression:
     enabled: true
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
 
 # API 文档配置
 springdoc:
